@@ -27,7 +27,7 @@ can be found [here](https://ktor.io/docs/http-client-engines.html).**
 katbox separates any anonymous operations from logged in operations by placing all anonymous operations in the `Catbox` 
 companion object. Therefore any functions defined there do not require a userhash.
 
-All functions are documented properly, so only the very basics will be shown here, for further information, reading the 
+All functions are documented properly, so only the very basics will be shown here, for further information, read the 
 documentation on the functions.
 
 ### Uploading files
