@@ -155,8 +155,8 @@ public class Catbox(internal val userHash: String) {
      *
      * Note that Catbox *will* delete all files in the given sequence until it encounters an invalid file. For example,
      * if given the set `[a.png, b.png, c.png]`, wherein `a.png` and `c.png` are valid files, then only `a.png` will
-     * be deleted, as `b.png`. If `a.png` and `b.png` are valid, but `c.png` is not, then both `a.png` and `b.png` will
-     * be deleted, etc.
+     * be deleted, as `b.png` is invalid and does not exist. If `a.png` and `b.png` are valid, but `c.png` is not, then
+     * both `a.png` and `b.png` will be deleted, etc.
      *
      * @param files a sequence of file names to delete, must be valid Catbox files, any spaces in the entries will be
      * removed
