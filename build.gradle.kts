@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.ormr.katbox"
-version = "0.1.0"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
@@ -51,7 +51,11 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-apache:1.6.7")
+            }
+        }
         val jvmTest by getting
         val jsMain by getting
         val jsTest by getting
