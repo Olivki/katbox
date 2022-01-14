@@ -31,6 +31,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.ParametersBuilder
 import io.ktor.http.Url
+import io.ktor.utils.io.core.use
 
 /**
  * Handles all operations on Catbox as a signed-in user, using the given [userHash].
@@ -39,11 +40,12 @@ import io.ktor.http.Url
  */
 public class Catbox(internal val userHash: String) {
     public companion object {
-        private val client = HttpClient {
-            defaultRequest {
-                url("https://catbox.moe/user/api.php")
+        private val client: HttpClient
+            get() = HttpClient {
+                defaultRequest {
+                    url("https://catbox.moe/user/api.php")
+                }
             }
-        }
 
         private enum class ReqType(val value: String) {
             URL_UPLOAD("urlupload"),
@@ -62,11 +64,13 @@ public class Catbox(internal val userHash: String) {
             reqType: ReqType,
             userHash: String?,
             parameterBuilder: ParametersBuilder.() -> Unit,
-        ): T = client.submitForm(formParameters = Parameters.build {
-            append("reqtype", reqType.value)
-            if (userHash != null) append("userhash", userHash)
-            parameterBuilder()
-        })
+        ): T = client.use {
+            it.submitForm(formParameters = Parameters.build {
+                append("reqtype", reqType.value)
+                if (userHash != null) append("userhash", userHash)
+                parameterBuilder()
+            })
+        }
 
         // TODO: calculate size of bytearray before uploading to ensure we don't exceed max size?
         internal suspend fun uploadImpl(
@@ -75,15 +79,17 @@ public class Catbox(internal val userHash: String) {
             userHash: String?,
         ): String {
             require(name.isNotBlank()) { "'name' must not be blank" }
-            return client.submitFormWithBinaryData(
-                formData = formData {
-                    append("reqtype", "fileupload")
-                    if (userHash != null) append("userhash", userHash)
-                    append("fileToUpload", content, Headers.build {
-                        append(HttpHeaders.ContentDisposition, "filename=$name")
-                    })
-                },
-            )
+            return client.use {
+                it.submitFormWithBinaryData(
+                    formData = formData {
+                        append("reqtype", "fileupload")
+                        if (userHash != null) append("userhash", userHash)
+                        append("fileToUpload", content, Headers.build {
+                            append(HttpHeaders.ContentDisposition, "filename=$name")
+                        })
+                    },
+                )
+            }
         }
 
         internal suspend fun uploadImpl(

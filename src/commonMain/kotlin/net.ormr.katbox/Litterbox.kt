@@ -23,16 +23,18 @@ import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.url
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.utils.io.core.use
 
 /**
  * Handles all operations on Litterbox.
  */
 public object Litterbox {
-    private val client = HttpClient {
-        defaultRequest {
-            url("https://litterbox.catbox.moe/resources/internals/api.php")
+    private val client: HttpClient
+        get() = HttpClient {
+            defaultRequest {
+                url("https://litterbox.catbox.moe/resources/internals/api.php")
+            }
         }
-    }
 
     /**
      * Uploads the given [content] to Litterbox and returns the url pointing to the uploaded file.
@@ -50,15 +52,17 @@ public object Litterbox {
         time: LitterboxTime = LitterboxTime.HOUR_1,
     ): String {
         require(name.isNotBlank()) { "'name' must not be blank" }
-        return client.submitFormWithBinaryData(
-            formData = formData {
-                append("reqtype", "fileupload")
-                append("time", time.value)
-                append("fileToUpload", content, Headers.build {
-                    append(HttpHeaders.ContentDisposition, "filename=$name")
-                })
-            }
-        )
+        return client.use {
+            it.submitFormWithBinaryData(
+                formData = formData {
+                    append("reqtype", "fileupload")
+                    append("time", time.value)
+                    append("fileToUpload", content, Headers.build {
+                        append(HttpHeaders.ContentDisposition, "filename=$name")
+                    })
+                }
+            )
+        }
     }
 }
 
