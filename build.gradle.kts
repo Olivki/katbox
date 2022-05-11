@@ -1,6 +1,6 @@
 plugins {
     id("me.him188.maven-central-publish") version "1.0.0-dev-3"
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.6.21"
 }
 
 group = "net.ormr.katbox"
