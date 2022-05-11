@@ -16,14 +16,12 @@
 
 package net.ormr.katbox
 
-import io.ktor.client.HttpClient
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.url
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.utils.io.core.use
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
+import io.ktor.utils.io.core.*
 
 /**
  * Handles all operations on Litterbox.
@@ -61,7 +59,7 @@ public object Litterbox {
                         append(HttpHeaders.ContentDisposition, "filename=$name")
                     })
                 }
-            )
+            ).body()
         }
     }
 }

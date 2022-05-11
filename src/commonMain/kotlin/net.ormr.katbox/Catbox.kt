@@ -16,22 +16,13 @@
 
 package net.ormr.katbox
 
-import io.ktor.client.HttpClient
-import io.ktor.client.features.ClientRequestException
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.readText
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.Parameters
-import io.ktor.http.ParametersBuilder
-import io.ktor.http.Url
-import io.ktor.utils.io.core.use
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.utils.io.core.*
 
 /**
  * Handles all operations on Catbox as a signed-in user, using the given [userHash].
@@ -58,7 +49,7 @@ public class Catbox(internal val userHash: String) {
         }
 
         private suspend fun isCatboxError(response: HttpResponse, message: String): Boolean =
-            response.status == HttpStatusCode.PreconditionFailed && response.readText() == message
+            response.status == HttpStatusCode.PreconditionFailed && response.bodyAsText() == message
 
         private suspend inline fun <reified T> request(
             reqType: ReqType,
@@ -69,7 +60,7 @@ public class Catbox(internal val userHash: String) {
                 append("reqtype", reqType.value)
                 if (userHash != null) append("userhash", userHash)
                 parameterBuilder()
-            })
+            }).body()
         }
 
         // TODO: calculate size of bytearray before uploading to ensure we don't exceed max size?
@@ -89,7 +80,7 @@ public class Catbox(internal val userHash: String) {
                         })
                     },
                 )
-            }
+            }.body()
         }
 
         internal suspend fun uploadImpl(

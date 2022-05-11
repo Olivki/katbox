@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.ormr.katbox"
-version = "0.2.0"
+version = "0.3.0"
 
 repositories {
     mavenCentral()
@@ -44,7 +44,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-core:2.0.0-beta-1")
             }
         }
         val commonTest by getting {
